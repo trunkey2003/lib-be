@@ -12,6 +12,7 @@ const mongoose = require('mongoose');
  * _id:
  * type: string
  * description: The auto-generated ID of the author (populated by Mongoose)
+ * readOnly: true
  * name:
  * type: string
  * description: The author's full name
@@ -36,7 +37,7 @@ const mongoose = require('mongoose');
  * description: The author's official website
  * books:
  * type: array
- * description: Virtual field to list associated book IDs (not stored in DB)
+ * description: Virtual field to list associated book IDs (not stored in DB, but populated by getAuthorById)
  * items:
  * $ref: '#/components/schemas/Book'
  */
