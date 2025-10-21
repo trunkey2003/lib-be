@@ -9,12 +9,15 @@ var booksRouter = require('./routes/books.route');
 var authorsRouter = require('./routes/authors.route.js');
 
 var app = express();
+var swaggerUi = require('swagger-ui-express');
+var swaggerSpec = require('./config/swagger.config.js');
 
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
