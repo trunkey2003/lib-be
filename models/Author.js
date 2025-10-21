@@ -1,46 +1,5 @@
 const mongoose = require('mongoose');
 
-/**
- * @swagger
- * components:
- * schemas:
- * Author:
- * type: object
- * required:
- * - name
- * properties:
- * _id:
- * type: string
- * description: The auto-generated ID of the author (populated by Mongoose)
- * readOnly: true
- * name:
- * type: string
- * description: The author's full name
- * example: J.R.R. Tolkien
- * biography:
- * type: string
- * description: A brief summary of the author's life
- * birthDate:
- * type: string
- * format: date
- * description: The author's date of birth
- * nationality:
- * type: string
- * description: The author's nationality
- * email:
- * type: string
- * format: email
- * description: The author's email address
- * website:
- * type: string
- * format: url
- * description: The author's official website
- * books:
- * type: array
- * description: Virtual field to list associated book IDs (not stored in DB, but populated by getAuthorById)
- * items:
- * $ref: '#/components/schemas/Book'
- */
 const authorSchema = new mongoose.Schema({
   name: {
     type: String,
