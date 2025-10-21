@@ -10,7 +10,7 @@ var authorsRouter = require('./routes/authors.route.js');
 
 var app = express();
 var swaggerUi = require('swagger-ui-express');
-var swaggerSpec = require('./config/swagger.config.js');
+var swaggerSpec = require('./swagger.config.js');
 
 app.use(logger('dev'));
 app.use(express.json());
