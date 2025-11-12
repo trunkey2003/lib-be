@@ -23,7 +23,7 @@ app.use('/users', usersRouter);
 app.use('/api/books', booksRouter);
 app.use('/api/authors', authorsRouter);
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 
 module.exports = app;

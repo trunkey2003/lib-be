@@ -4,333 +4,278 @@ const authorsController = require('../controllers/authors.controller.js');
 
 /**
  * @swagger
- * tags:
- *   name: Authors
- *   description: Author management
- */
-
-/**
- * @swagger
- * components:
- *   securitySchemes:
- *     bearerAuth:
- *       type: http
- *       scheme: bearer
- *       bearerFormat: JWT
- *   schemas:
- *     Author:
- *       type: object
- *       properties:
- *         _id:
- *           type: string
- *           description: MongoDB ObjectId
- *           example: "6715e7f7c9a2b1a5a7b9f123"
- *         name:
- *           type: string
- *           example: "Haruki Murakami"
- *         biography:
- *           type: string
- *           example: "Japanese writer known for blending pop culture with magical realism."
- *         birthDate:
- *           type: string
- *           format: date-time
- *           example: "1949-01-12T00:00:00.000Z"
- *         nationality:
- *           type: string
- *           example: "Japanese"
- *         email:
- *           type: string
- *           format: email
- *           example: "haruki@example.com"
- *         website:
- *           type: string
- *           example: "https://www.harukimurakami.com"
- *         books:
- *           type: array
- *           description: Virtual population of books authored by this author
- *           items:
- *             type: object
- *           example: []
- *         createdAt:
- *           type: string
- *           format: date-time
- *         updatedAt:
- *           type: string
- *           format: date-time
- *     AuthorCreate:
- *       type: object
- *       required: [name]
- *       properties:
- *         name:
- *           type: string
- *         biography:
- *           type: string
- *         birthDate:
- *           type: string
- *           format: date-time
- *         nationality:
- *           type: string
- *         email:
- *           type: string
- *           format: email
- *         website:
- *           type: string
- *     AuthorUpdate:
- *       type: object
- *       properties:
- *         name:
- *           type: string
- *         biography:
- *           type: string
- *         birthDate:
- *           type: string
- *           format: date-time
- *         nationality:
- *           type: string
- *         email:
- *           type: string
- *           format: email
- *         website:
- *           type: string
- *     AuthorStats:
- *       type: object
- *       description: Example stats payload for an author
- *       properties:
- *         authorId:
- *           type: string
- *           example: "6715e7f7c9a2b1a5a7b9f123"
- *         booksCount:
- *           type: integer
- *           example: 12
- *         firstPublicationYear:
- *           type: integer
- *           example: 1982
- *     Error:
- *       type: object
- *       properties:
- *         message:
- *           type: string
- *           example: "Not found"
- */
-
-/**
- * @swagger
  * /authors:
  *   get:
- *     summary: Get all authors
+ *     summary: Get all authors with pagination and filters
  *     tags: [Authors]
- *     security:
- *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         description: Page number
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         description: Number of items per page
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Search by name
+ *       - in: query
+ *         name: nationality
+ *         schema:
+ *           type: string
+ *         description: Filter by nationality
+ *       - in: query
+ *         name: sortBy
+ *         schema:
+ *           type: string
+ *         description: Field to sort by
+ *       - in: query
+ *         name: order
+ *         schema:
+ *           type: string
+ *           enum: [asc, desc]
+ *         description: Sort order
  *     responses:
  *       200:
- *         description: A list of authors
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Author'
- *       500:
- *         description: Server error
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
- *   post:
- *     summary: Create a new author
- *     tags: [Authors]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/AuthorCreate'
- *           example:
- *             name: "Nguyễn Nhật Ánh"
- *             biography: "Vietnamese author of children's literature."
- *             birthDate: "1955-05-07T00:00:00.000Z"
- *             nationality: "Vietnamese"
- *             email: "nna@example.com"
- *             website: "https://example.com"
- *     responses:
- *       201:
- *         description: Author created
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Author'
- *       400:
- *         description: Validation error
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
- *       500:
- *         description: Server error
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
+ *         description: Success
  */
+router.get('/', authorsController.getAllAuthors);
 
 /**
  * @swagger
- * /authors/{id}:
+ * /authors/search:
  *   get:
- *     summary: Get an author by ID
+ *     summary: Search authors by name or biography
  *     tags: [Authors]
- *     security:
- *       - bearerAuth: []
  *     parameters:
- *       - name: id
- *         in: path
- *         description: Author ID
+ *       - in: query
+ *         name: query
  *         required: true
  *         schema:
  *           type: string
- *           example: "6715e7f7c9a2b1a5a7b9f123"
+ *         description: Search query
+ *       - in: query
+ *         name: nationality
+ *         schema:
+ *           type: string
+ *         description: Filter by nationality
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         description: Number of results
  *     responses:
  *       200:
- *         description: Author found
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Author'
- *       404:
- *         description: Author not found
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
- *       500:
- *         description: Server error
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
- *   put:
- *     summary: Update an author
- *     tags: [Authors]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - name: id
- *         in: path
- *         description: Author ID
- *         required: true
- *         schema:
- *           type: string
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/AuthorUpdate'
- *           example:
- *             biography: "Updated bio"
- *             website: "https://new-site.example"
- *     responses:
- *       200:
- *         description: Author updated
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Author'
- *       400:
- *         description: Validation error
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
- *       404:
- *         description: Author not found
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
- *       500:
- *         description: Server error
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
- *   delete:
- *     summary: Delete an author
- *     tags: [Authors]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - name: id
- *         in: path
- *         description: Author ID
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       204:
- *         description: Author deleted (no content)
- *       404:
- *         description: Author not found
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
- *       500:
- *         description: Server error
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
+ *         description: Success
  */
+router.get('/search', authorsController.searchAuthors);
+
+/**
+ * @swagger
+ * /authors/top-by-books:
+ *   get:
+ *     summary: Get top authors by book count
+ *     tags: [Authors]
+ *     parameters:
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         description: Number of authors to return
+ *     responses:
+ *       200:
+ *         description: Success
+ */
+router.get('/top-by-books', authorsController.getTopAuthorsByBookCount);
+
+/**
+ * @swagger
+ * /authors/top-by-rating:
+ *   get:
+ *     summary: Get top authors by average book rating
+ *     tags: [Authors]
+ *     parameters:
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         description: Number of authors to return
+ *       - in: query
+ *         name: minBooks
+ *         schema:
+ *           type: integer
+ *         description: Minimum number of books required
+ *     responses:
+ *       200:
+ *         description: Success
+ */
+router.get('/top-by-rating', authorsController.getTopAuthorsByRating);
+
+/**
+ * @swagger
+ * /authors/nationalities:
+ *   get:
+ *     summary: Get all unique nationalities
+ *     tags: [Authors]
+ *     responses:
+ *       200:
+ *         description: Success
+ */
+router.get('/nationalities', authorsController.getAllNationalities);
+
+/**
+ * @swagger
+ * /authors/nationality/{nationality}:
+ *   get:
+ *     summary: Get authors by nationality
+ *     tags: [Authors]
+ *     parameters:
+ *       - in: path
+ *         name: nationality
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Success
+ */
+router.get('/nationality/:nationality', authorsController.getAuthorsByNationality);
 
 /**
  * @swagger
  * /authors/{id}/stats:
  *   get:
- *     summary: Get aggregated stats for an author
+ *     summary: Get author statistics
  *     tags: [Authors]
- *     security:
- *       - bearerAuth: []
  *     parameters:
- *       - name: id
- *         in: path
- *         description: Author ID
+ *       - in: path
+ *         name: id
  *         required: true
  *         schema:
  *           type: string
  *     responses:
  *       200:
- *         description: Author statistics
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/AuthorStats'
- *             example:
- *               authorId: "6715e7f7c9a2b1a5a7b9f123"
- *               booksCount: 8
- *               firstPublicationYear: 2004
+ *         description: Success
  *       404:
  *         description: Author not found
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
- *       500:
- *         description: Server error
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
  */
-
-router.get('/', authorsController.getAllAuthors);
-
-router.get('/:id', authorsController.getAuthorById);
 router.get('/:id/stats', authorsController.getAuthorStats);
+
+/**
+ * @swagger
+ * /authors/{id}:
+ *   get:
+ *     summary: Get a single author by ID
+ *     tags: [Authors]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Success
+ *       404:
+ *         description: Author not found
+ */
+router.get('/:id', authorsController.getAuthorById);
+
+/**
+ * @swagger
+ * /authors:
+ *   post:
+ *     summary: Create a new author
+ *     tags: [Authors]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *             properties:
+ *               name:
+ *                 type: string
+ *               biography:
+ *                 type: string
+ *               birthDate:
+ *                 type: string
+ *                 format: date
+ *               nationality:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               website:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Author created successfully
+ *       400:
+ *         description: Bad request
+ */
 router.post('/', authorsController.createAuthor);
+
+/**
+ * @swagger
+ * /authors/{id}:
+ *   put:
+ *     summary: Update an author
+ *     tags: [Authors]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *     responses:
+ *       200:
+ *         description: Author updated successfully
+ *       404:
+ *         description: Author not found
+ */
 router.put('/:id', authorsController.updateAuthor);
+
+/**
+ * @swagger
+ * /authors/{id}:
+ *   delete:
+ *     summary: Delete an author
+ *     tags: [Authors]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Author deleted successfully
+ *       400:
+ *         description: Cannot delete author with associated books
+ *       404:
+ *         description: Author not found
+ */
 router.delete('/:id', authorsController.deleteAuthor);
 
 module.exports = router;

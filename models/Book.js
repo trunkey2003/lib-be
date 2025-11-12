@@ -1,65 +1,5 @@
 const mongoose = require('mongoose');
 
-/**
- * @swagger
- * components:
- * schemas:
- * Book:
- * type: object
- * required:
- * - title
- * - author
- * properties:
- * _id:
- * type: string
- * description: The auto-generated ID of the book
- * readOnly: true
- * title:
- * type: string
- * description: The title of the book
- * example: The Lord of the Rings
- * author:
- * type: string
- * description: The ID of the author
- * example: 60d5ec49c63c784340d0e6a3
- * isbn:
- * type: string
- * description: The ISBN (10 or 13 digits)
- * unique: true
- * example: 9780618260218
- * publishedDate:
- * type: string
- * format: date
- * description: The publication date
- * publisher:
- * type: string
- * description: The publisher's name
- * pages:
- * type: integer
- * description: The number of pages
- * genre:
- * type: string
- * enum: ['Fiction', 'Non-Fiction', 'Science Fiction', 'Fantasy', 'Mystery', 'Thriller', 'Romance', 'Biography', 'History', 'Science', 'Self-Help', 'Other']
- * default: Other
- * description:
- * type: string
- * description: A brief summary of the book
- * language:
- * type: string
- * default: English
- * price:
- * type: number
- * format: float
- * inStock:
- * type: boolean
- * default: true
- * rating:
- * type: number
- * format: float
- * minimum: 0
- * maximum: 5
- * default: 0
- */
 const bookSchema = new mongoose.Schema({
   title: {
     type: String,
@@ -93,6 +33,10 @@ const bookSchema = new mongoose.Schema({
     enum: ['Fiction', 'Non-Fiction', 'Science Fiction', 'Fantasy', 'Mystery', 'Thriller', 'Romance', 'Biography', 'History', 'Science', 'Self-Help', 'Other'],
     default: 'Other'
   },
+  category: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Category'
+  },
   description: {
     type: String,
     trim: true
@@ -120,7 +64,10 @@ const bookSchema = new mongoose.Schema({
   timestamps: true
 });
 
+// Indexes for better query performance
 bookSchema.index({ title: 'text', description: 'text' });
 bookSchema.index({ author: 1 });
+bookSchema.index({ category: 1 });
+bookSchema.index({ rating: -1 });
 
 module.exports = mongoose.model('Book', bookSchema);
